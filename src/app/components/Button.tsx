@@ -1,0 +1,46 @@
+import { cx } from "lib/cx";
+import { Tooltip } from "components/Tooltip";
+
+type ReactButtonProps = React.ComponentProps<"button">;
+type ReactAnchorProps = React.ComponentProps<"a">;
+type ButtonProps = ReactButtonProps | ReactAnchorProps;
+
+const isAnchor = (props: ButtonProps): props is ReactAnchorProps => {
+  return "href" in props;
+};
+
+export const Button = (props: ButtonProps) => {
+  if (isAnchor(props)) {
+    return <a {...props} />;
+  } else {
+    return <button type="button" {...props} />;
+  }
+};
+
+export const PrimaryButton = ({ className, ...props }: ButtonProps) => (
+  <Button className={cx("btn-primary", className)} {...props} />
+);
+
+type IconButtonProps = ButtonProps & {
+  size?: "small" | "medium";
+  tooltipText: string;
+};
+
+export const IconButton = ({
+  className,
+  size = "medium",
+  tooltipText,
+  ...props
+}: IconButtonProps) => (
+  <Tooltip text={tooltipText}>
+    <Button
+      type="button"
+      className={cx(
+        "rounded-sm border border-transparent outline-none hover:border-slate-300 hover:bg-slate-50 focus-visible:border-slate-300 focus-visible:bg-slate-50",
+        size === "medium" ? "p-1" : "p-0.5",
+        className
+      )}
+      {...props}
+    />
+  </Tooltip>
+);

@@ -1,0 +1,49 @@
+@import url("/fonts/fonts.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm border border-slate-900 bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm border border-rose-300 bg-white px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-50;
+  }
+  .text-primary {
+    @apply text-slate-900 !important;
+  }
+  .bg-primary {
+    @apply bg-slate-900 text-white;
+  }
+  .ui-panel {
+    @apply border border-slate-300 bg-white;
+  }
+  .outline-theme-purple {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400;
+  }
+  .outline-theme-blue {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400;
+  }
+  .within-outline-theme-purple {
+    @apply focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-slate-400;
+  }
+}
+
+@layer base {
+  body {
+    @apply min-h-screen bg-stone-50 text-slate-900;
+  }
+}
+
+:root {
+  --theme-purple: #111827;
+  --theme-blue: #374151;
+  /* Keep the below variable names in sync with CSS_VARIABLES in globals-css.ts */
+  --top-nav-bar-height: 3.5rem;
+  --resume-control-bar-height: 3rem;
+  --resume-padding: 1.5rem;
+}

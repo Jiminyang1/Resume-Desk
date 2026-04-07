@@ -1,71 +1,214 @@
-# OpenResume
+# Resume Desk
 
-OpenResume is a powerful open-source resume builder and resume parser.
+Resume Desk is a local-first resume workspace built with Next.js 13.
 
-The goal of OpenResume is to provide everyone with free access to a modern professional resume design and enable anyone to apply for jobs with confidence.
+This project is an original adaptation inspired by [OpenResume](https://open-resume.com).
 
-Official site: [https://open-resume.com](https://open-resume.com)
+This repository lets users:
 
-## ⚒️ Resume Builder
+- create and manage multiple resume drafts in the browser
+- edit resumes with a live PDF preview
+- export polished PDF resumes
+- import an existing resume PDF into editable builder state
 
-OpenResume's resume builder allows user to create a modern professional resume easily.
+The codebase still contains the PDF parsing pipeline used for resume import, and the parser route currently renders a disabled placeholder rather than the older parser playground UI.
 
-![Resume Builder Demo](https://i.ibb.co/jzcrrt8/resume-builder-demo-optimize.gif)
+## What The App Looks Like Today
 
-It has 5 Core Features:
-| <div style="width:285px">**Feature**</div> | **Description** |
-|---|---|
-| **1. Real Time UI Update** | The resume PDF is updated in real time as you enter your resume information, so you can easily see the final output. |
-| **2. Modern Professional Resume Design** | The resume PDF is a modern professional design that adheres to U.S. best practices and is ATS friendly to top ATS platforms such as Greenhouse and Lever. It automatically formats fonts, sizes, margins, bullet points to ensure consistency and avoid human errors. |
-| **3. Privacy Focus** | The app only runs locally on your browser, meaning no sign up is required and no data ever leaves your browser, so it gives you peace of mind on your personal data. (Fun fact: Running only locally means the app still works even if you disconnect the internet.) |
-| **4. Import From Existing Resume PDF** | If you already have an existing resume PDF, you have the option to import it directly, so you can update your resume design to a modern professional design in literally a few seconds. |
-| **5. Successful Track Record** | OpenResume users have landed interviews and offers from top companies, such as Dropbox, Google, Meta to name a few. It has been proven to work and liken by recruiters and hiring managers. |
+The current app is centered around a resume dashboard instead of a marketing landing page.
 
-## 🔍 Resume Parser
+- `/` shows the local resume manager
+- `/resume-builder` opens the editor and live preview
+- `/resume-import` imports a PDF into local resume state
+- `/resume-parser` is currently a disabled page shell
 
-OpenResume’s second component is the resume parser. For those who have an existing resume, the resume parser can help test and confirm its ATS readability.
+The app is browser-first and local-first:
 
-![Resume Parser Demo](https://i.ibb.co/JvSVwNk/resume-parser-demo-optimize.gif)
+- drafts are stored in `localStorage`
+- no sign-in is required
+- export happens entirely in the browser
+- UI copy supports English and Simplified Chinese
 
-You can learn more about the resume parser algorithm in the ["Resume Parser Algorithm Deep Dive" section](https://open-resume.com/resume-parser).
+## Tech Stack
 
-## 📚 Tech Stack
+- Next.js 13 App Router
+- React 18
+- TypeScript with `strict: true`
+- Tailwind CSS
+- Redux Toolkit
+- `@react-pdf/renderer` for preview and export
+- `pdfjs-dist` / PDF.js for PDF extraction and parsing
+- Jest + Testing Library
 
-| <div style="width:140px">**Category**</div> | <div style="width:100px">**Choice**</div> | **Descriptions** |
-|---|---|---|
-| **Language** | [TypeScript](https://github.com/microsoft/TypeScript) | TypeScript is JavaScript with static type checking and helps catch many silly bugs at code time. |
-| **UI Library** | [React](https://github.com/facebook/react) | React’s declarative syntax and component-based architecture make it simple to develop reactive reusable components. |
-| **State Management** | [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) | Redux toolkit reduces the boilerplate to set up and update a central redux store, which is used in managing the complex resume state. |
-| **CSS Framework** | [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) | Tailwind speeds up development by providing helpful css utilities and removing the need to context switch between tsx and css files. |
-| **Web Framework** | [NextJS 13](https://github.com/vercel/next.js) | Next.js supports static site generation and helps build efficient React webpages that support SEO. |
-| **PDF Reader** | [PDF.js](https://github.com/mozilla/pdf.js) | PDF.js reads content from PDF files and is used by the resume parser at its first step to read a resume PDF’s content. |
-| **PDF Renderer** | [React-pdf](https://github.com/diegomura/react-pdf) | React-pdf creates PDF files and is used by the resume builder to create a downloadable PDF file. |
+## Getting Started
 
-## 📁 Project Structure
+### npm
 
-OpenResume is created with the NextJS web framework and follows its project structure. The source code can be found in `src/app`. There are a total of 4 page routes as shown in the table below. (Code path is relative to `src/app`)
+```bash
+npm install
+npm run dev
+```
 
-| <div style="width:115px">**Page Route**</div> | **Code Path** | **Description** |
-|---|---|---|
-| / | /page.tsx | Home page that contains hero, auto typing resume, steps, testimonials, logo cloud, etc |
-| /resume-import | /resume-import/page.tsx | Resume import page, where you can choose to import data from an existing resume PDF. The main component used is `ResumeDropzone` (`/components/ResumeDropzone.tsx`) |
-| /resume-builder | /resume-builder/page.tsx | Resume builder page to build and download a resume PDF. The main components used are `ResumeForm` (`/components/ResumeForm`) and `Resume` (`/components/Resume`) |
-| /resume-parser | /resume-parser/page.tsx | Resume parser page to test a resume’s AST readability. The main library util used is `parseResumeFromPdf` (`/lib/parse-resume-from-pdf`) |
+Open [http://localhost:3000](http://localhost:3000).
 
-## 💻 Local Development
+### Docker
 
-### Method 1: npm
+```bash
+docker build -t resume-desk .
+docker run -p 3000:3000 resume-desk
+```
 
-1. Download the repo `git clone https://github.com/xitanggg/open-resume.git`
-2. Change the directory `cd open-resume`
-3. Install the dependency `npm install`
-4. Start a development server `npm run dev`
-5. Open your browser and visit [http://localhost:3000](http://localhost:3000) to see OpenResume live
+## Available Scripts
 
-### Method 2: Docker
+- `npm run dev`: start the local dev server on port 3000
+- `npm run build`: production build
+- `npm run start`: run the production server after building
+- `npm run lint`: run Next.js linting
+- `npm run test:ci`: run Jest once in CI mode
+- `npm run test`: run Jest in watch mode
 
-1. Download the repo `git clone https://github.com/xitanggg/open-resume.git`
-2. Change the directory `cd open-resume`
-3. Build the container `docker build -t open-resume .`
-4. Start the container `docker run -p 3000:3000 open-resume`
-5. Open your browser and visit [http://localhost:3000](http://localhost:3000) to see OpenResume live
+Useful one-off test examples:
+
+```bash
+npm run test:ci -- --runTestsByPath src/app/components/Resume/auto-fit.test.ts
+npm run test:ci -- -t "auto fit"
+```
+
+## Project Structure
+
+Most product code lives under `src/app`.
+
+```text
+src/app
+├── page.tsx                          # resume manager dashboard
+├── resume-builder/page.tsx           # builder + live preview
+├── resume-import/page.tsx            # PDF import flow
+├── resume-parser/page.tsx            # parser placeholder page
+├── components/ResumeForm             # editable resume form
+├── components/Resume                 # preview shell, controls, auto-fit
+├── components/Resume/ResumePDF       # PDF document components
+├── components/ResumeManager          # dashboard for saved drafts
+├── components/fonts                  # font registration and fallbacks
+├── lib/redux                         # store, slices, persistence helpers
+└── lib/parse-resume-from-pdf         # parser pipeline and extraction heuristics
+```
+
+`tsconfig.json` uses `baseUrl: src/app`, so imports are intentionally absolute:
+
+```ts
+import { ResumeForm } from "components/ResumeForm";
+import { store } from "lib/redux/store";
+```
+
+## Core Architecture
+
+### 1. Resume manager and persistence
+
+The app stores resume data locally and supports multiple saved drafts.
+
+The current implementation still uses legacy storage keys inherited from the OpenResume-based foundation:
+
+- current builder snapshot: `open-resume-state`
+- dashboard resume library: `open-resume-manager`
+- UI preferences: `open-resume-preferences`
+
+Main files:
+
+- `src/app/components/ResumeManager/index.tsx`
+- `src/app/lib/redux/local-storage.ts`
+- `src/app/lib/preferences.ts`
+
+### 2. Builder and preview stay in sync
+
+The builder is a client-side experience because it depends on Redux, `localStorage`, browser PDF APIs, and DOM measurement.
+
+- `src/app/resume-builder/page.tsx` wires the Redux `Provider`
+- `src/app/components/ResumeForm/index.tsx` renders the editable sections
+- `src/app/components/Resume/index.tsx` renders the preview and controls
+- `src/app/lib/redux/resumeSlice.ts` stores resume content
+- `src/app/lib/redux/settingsSlice.ts` stores layout and display settings
+
+If you change the resume schema or section settings, update the form, Redux slices, and PDF consumers together.
+
+### 3. PDF rendering and auto-fit
+
+Preview and export both use `@react-pdf/renderer`, not DOM-to-PDF conversion.
+
+- `src/app/components/Resume/ResumePDF/index.tsx` is the shared PDF document
+- `src/app/components/Resume/ResumePDF/layout.ts` defines layout tokens and scaling
+- `src/app/components/Resume/AutoFitProvider.tsx` calculates a layout that fits the resume
+- `src/app/components/Resume/create-resume-pdf.tsx` creates downloadable blobs
+
+This means spacing, font sizes, and layout changes should be validated in both preview and download flows.
+
+### 4. PDF import and parsing
+
+The import flow relies on the parser pipeline under `src/app/lib/parse-resume-from-pdf`.
+
+Pipeline overview:
+
+1. `read-pdf.ts`
+2. `group-text-items-into-lines.ts`
+3. `group-lines-into-sections.ts`
+4. `extract-resume-from-sections/*`
+
+The parser still powers resume import, even though the `/resume-parser` route is currently not exposing the previous interactive parser UI.
+
+## Routes
+
+| Route | Purpose | Main entry |
+| --- | --- | --- |
+| `/` | Resume dashboard and saved drafts | `src/app/page.tsx` |
+| `/resume-builder` | Resume editor and live preview | `src/app/resume-builder/page.tsx` |
+| `/resume-import` | Import an existing PDF into builder state | `src/app/resume-import/page.tsx` |
+| `/resume-parser` | Disabled parser placeholder page | `src/app/resume-parser/page.tsx` |
+| `/resumes` | Redirects back to `/` | `src/app/resumes/page.tsx` |
+
+## Development Notes
+
+- Keep the existing absolute import style from `src/app`
+- Add `"use client";` only where browser APIs are actually required
+- When changing persisted state shape, preserve compatibility with existing saved drafts
+- Font behavior matters for multilingual resumes, especially for Chinese font fallbacks
+- `next.config.js` aliases `canvas` and `encoding` to `false` to avoid `pdfjs-dist` build issues
+- The app is built with `output: "standalone"` for containerized deployment
+
+## Validation Checklist
+
+After non-trivial changes, run the smallest relevant set:
+
+```bash
+npm run lint
+npm run test:ci
+npm run build
+```
+
+Manual smoke tests by route:
+
+1. `/` for resume dashboard behavior
+2. `/resume-builder` for form, preview, and download behavior
+3. `/resume-import` for PDF import
+4. `/resume-parser` only if you touched parser-related copy or routing behavior
+
+When changing builder or PDF code, verify:
+
+- form edits update the preview
+- PDF export still works
+- no console errors appear in the browser
+
+When changing parser logic, verify:
+
+- sample PDFs still load
+- extracted sections remain reasonable
+- targeted Jest coverage reflects the heuristic change
+
+## Contributing Guidance
+
+- Prefer focused updates over broad refactors
+- Reuse existing utilities and components when possible
+- If a change touches both form inputs and PDF output, review both paths before finishing
+- If you add a dependency, explain why the current stack was not enough
+
+## License
+
+This project is licensed under the terms of the [LICENSE](LICENSE) file.

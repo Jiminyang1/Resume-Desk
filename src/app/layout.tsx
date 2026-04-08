@@ -7,11 +7,6 @@ export const metadata = {
   title: "Resume Desk - Free Resume Builder",
   description:
     "Resume Desk is a free, local-first resume builder for writing, saving, and exporting polished resumes.",
-  icons: {
-    icon: "/resume-desk-icon.svg?v=20260407",
-    shortcut: "/resume-desk-icon.svg?v=20260407",
-    apple: "/resume-desk-icon.svg?v=20260407",
-  },
 };
 
 export default function RootLayout({

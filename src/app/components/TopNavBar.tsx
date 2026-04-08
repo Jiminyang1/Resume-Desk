@@ -105,26 +105,80 @@ export const TopNavBar = () => {
 const LogoMark = () => (
   <svg
     aria-hidden="true"
-    viewBox="0 0 48 48"
+    viewBox="0 0 33 33"
     className="h-9 w-9 shrink-0"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
   >
-    <rect x="5" y="5" width="38" height="38" stroke="#111827" strokeWidth="2.5" />
-    <path
-      d="M17 11.5H30L35 16.5V31H17V11.5Z"
-      fill="#FAFAF9"
-      stroke="#111827"
-      strokeWidth="2.5"
-      strokeLinejoin="miter"
-    />
-    <path
-      d="M30 11.5V16.5H35"
-      stroke="#111827"
-      strokeWidth="2.5"
-      strokeLinejoin="miter"
-    />
-    <path d="M14 35H38" stroke="#6B7280" strokeWidth="2.5" />
-    <path d="M19.5 39H32.5" stroke="#111827" strokeWidth="2.5" />
+    <g clipPath="url(#resume-desk-logo-clip)">
+      <path
+        d="M5.52936 9.25414V3.4703C5.52936 2.85672 5.7731 2.26826 6.20698 1.83439C6.64085 1.40052 7.22931 1.15677 7.84289 1.15677H19.4106L30.9782 12.7244V28.9192C30.9782 29.5328 30.7345 30.1212 30.3006 30.5551C29.8668 30.989 29.2783 31.2327 28.6647 31.2327H20.5673"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19.4106 1.15677V12.7244H30.9783"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.42126 15.038V18.5083"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M1.41119 19.0867L4.41879 20.8218"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M1.41119 27.184L4.41879 25.4489"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.42126 31.2327V27.7624"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.4312 27.184L12.4236 25.4489"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.4312 19.0867L12.4236 20.8218"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.42126 27.7624C10.9767 27.7624 13.0483 25.6908 13.0483 23.1353C13.0483 20.5799 10.9767 18.5083 8.42126 18.5083C5.8658 18.5083 3.79419 20.5799 3.79419 23.1353C3.79419 25.6908 5.8658 27.7624 8.42126 27.7624Z"
+        stroke="currentColor"
+        strokeWidth="2.31353"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+    <defs>
+      <clipPath id="resume-desk-logo-clip">
+        <rect width="32.3895" height="32.3895" fill="white" />
+      </clipPath>
+    </defs>
   </svg>
 );

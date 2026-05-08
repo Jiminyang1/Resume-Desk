@@ -3,25 +3,22 @@ import type { RootState } from "lib/redux/store";
 import type {
   Resume,
   ResumeEducation,
-  ResumeProfileExtraDetail,
   ResumeProfile,
+  ResumeProfileContact,
   ResumeProject,
   ResumeSkills,
   ResumeWorkExperience,
 } from "lib/redux/types";
 import type { ShowForm } from "lib/redux/settingsSlice";
+import { createProfileContact } from "lib/profile-contacts";
 
 type RepeatableForm = Exclude<ShowForm, "skills" | "custom">;
 
 export const initialProfile: ResumeProfile = {
   name: "",
   summary: "",
-  email: "",
-  phone: "",
-  location: "",
-  url: "",
   photoAssetId: null,
-  extraDetails: [],
+  contacts: [],
 };
 
 export const initialWorkExperience: ResumeWorkExperience = {
@@ -84,7 +81,7 @@ export const resumeSlice = createSlice({
       draft,
       action: PayloadAction<
         | {
-            field: Exclude<keyof ResumeProfile, "photoAssetId" | "extraDetails">;
+            field: Exclude<keyof ResumeProfile, "photoAssetId" | "contacts">;
             value: string;
           }
         | { field: "photoAssetId"; value: string | null }
@@ -93,35 +90,38 @@ export const resumeSlice = createSlice({
       const { field, value } = action.payload;
       draft.profile[field] = value as never;
     },
-    addProfileExtraDetail: (draft) => {
-      draft.profile.extraDetails.push({
-        id:
-          typeof crypto !== "undefined" && "randomUUID" in crypto
-            ? crypto.randomUUID()
-            : `detail-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        label: "",
-        value: "",
-        href: "",
-      });
-    },
-    changeProfileExtraDetail: (
+    addProfileContact: (
       draft,
-      action: PayloadAction<{
-        idx: number;
-        field: keyof Omit<ResumeProfileExtraDetail, "id">;
-        value: string;
-      }>
+      action: PayloadAction<{ type?: ResumeProfileContact["type"] } | undefined>
+    ) => {
+      draft.profile.contacts.push(createProfileContact(action.payload?.type));
+    },
+    changeProfileContact: (
+      draft,
+      action: PayloadAction<
+        | {
+            idx: number;
+            field: "type";
+            value: ResumeProfileContact["type"];
+          }
+        | {
+            idx: number;
+            field: "value";
+            value: string;
+          }
+      >
     ) => {
       const { idx, field, value } = action.payload;
-      const detail = draft.profile.extraDetails[idx];
-      if (!detail) return;
-      detail[field] = value;
+      const contact = draft.profile.contacts[idx];
+      if (!contact) return;
+      if (field === "type") {
+        contact.type = value;
+      } else {
+        contact.value = value;
+      }
     },
-    deleteProfileExtraDetail: (
-      draft,
-      action: PayloadAction<{ idx: number }>
-    ) => {
-      draft.profile.extraDetails.splice(action.payload.idx, 1);
+    deleteProfileContact: (draft, action: PayloadAction<{ idx: number }>) => {
+      draft.profile.contacts.splice(action.payload.idx, 1);
     },
     changeWorkExperiences: (
       draft,
@@ -231,9 +231,9 @@ export const resumeSlice = createSlice({
 
 export const {
   changeProfile,
-  addProfileExtraDetail,
-  changeProfileExtraDetail,
-  deleteProfileExtraDetail,
+  addProfileContact,
+  changeProfileContact,
+  deleteProfileContact,
   changeWorkExperiences,
   changeEducations,
   changeProjects,

@@ -4,6 +4,7 @@ import {
   Input,
   BulletListTextarea,
 } from "components/ResumeForm/Form/InputGroup";
+import { BulletListIconButton } from "components/ResumeForm/Form/IconButton";
 import type { CreateHandleChangeArgsWithDescriptions } from "components/ResumeForm/types";
 import { useAppDispatch, useAppSelector } from "lib/redux/hooks";
 import {
@@ -12,16 +13,22 @@ import {
   selectWorkExperiences,
 } from "lib/redux/resumeSlice";
 import type { ResumeWorkExperience } from "lib/redux/types";
+import {
+  changeShowBulletPoints,
+  selectShowBulletPoints,
+} from "lib/redux/settingsSlice";
 
 export const WorkExperiencesForm = () => {
   const copy = useTranslation();
   const workExperiences = useAppSelector(selectWorkExperiences);
   const dispatch = useAppDispatch();
+  const form = "workExperiences";
+  const showBulletPoints = useAppSelector(selectShowBulletPoints(form));
 
   const showDelete = workExperiences.length > 1;
 
   return (
-    <Form form="workExperiences" addButtonText={copy.forms.work.add}>
+    <Form form={form} addButtonText={copy.forms.work.add}>
       {workExperiences.map(
         ({ company, jobTitle, date, descriptions, visible }, idx) => {
           const handleWorkExperienceChange = (
@@ -38,11 +45,14 @@ export const WorkExperiencesForm = () => {
           const handleVisibilityChange = (value: boolean) => {
             dispatch(
               changeSectionVisibility({
-                form: "workExperiences",
+                form,
                 idx,
                 value,
               })
             );
+          };
+          const handleShowBulletPoints = (value: boolean) => {
+            dispatch(changeShowBulletPoints({ field: form, value }));
           };
           const showMoveUp = idx !== 0;
           const showMoveDown = idx !== workExperiences.length - 1;
@@ -51,7 +61,7 @@ export const WorkExperiencesForm = () => {
           return (
             <FormSection
               key={idx}
-              form="workExperiences"
+              form={form}
               idx={idx}
               visible={isVisible}
               setVisible={handleVisibilityChange}
@@ -84,14 +94,23 @@ export const WorkExperiencesForm = () => {
                 value={date}
                 onChange={handleWorkExperienceChange}
               />
-              <BulletListTextarea
-                label={copy.forms.work.description}
-                labelClassName="col-span-full"
-                name="descriptions"
-                placeholder={copy.forms.work.descriptionPlaceholder}
-                value={descriptions}
-                onChange={handleWorkExperienceChange}
-              />
+              <div className="relative col-span-full">
+                <BulletListTextarea
+                  label={copy.forms.work.description}
+                  labelClassName="col-span-full"
+                  name="descriptions"
+                  placeholder={copy.forms.work.descriptionPlaceholder}
+                  value={descriptions}
+                  onChange={handleWorkExperienceChange}
+                  showBulletPoints={showBulletPoints}
+                />
+                <div className="absolute left-[5.7rem] top-[0.07rem]">
+                  <BulletListIconButton
+                    showBulletPoints={showBulletPoints}
+                    onClick={handleShowBulletPoints}
+                  />
+                </div>
+              </div>
             </FormSection>
           );
         }

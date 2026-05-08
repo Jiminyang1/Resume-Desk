@@ -8,16 +8,12 @@ import {
 } from "lib/redux/local-storage";
 import type { RootState } from "lib/redux/store";
 
-const initialResumeState = {
+const initialResumeState: RootState["resume"] = {
   profile: {
     name: "",
     summary: "",
-    email: "",
-    phone: "",
-    location: "",
-    url: "",
     photoAssetId: null,
-    extraDetails: [],
+    contacts: [],
   },
   workExperiences: [
     {
@@ -54,7 +50,7 @@ const initialResumeState = {
   },
 };
 
-const initialSettings = {
+const initialSettings: RootState["settings"] = {
   themeColor: "#171717",
   themeColorTargets: {
     banner: false,
@@ -81,6 +77,7 @@ const initialSettings = {
   },
   formsOrder: ["workExperiences", "educations", "projects", "skills", "custom"],
   showBulletPoints: {
+    workExperiences: true,
     educations: true,
     projects: true,
     skills: true,
@@ -95,7 +92,7 @@ const createRootState = ({
   ({
     resume,
     settings,
-  }) as RootState;
+  } as RootState);
 
 describe("local storage resume manager", () => {
   beforeEach(() => {
@@ -188,8 +185,44 @@ describe("local storage resume manager", () => {
       sectionHeadings: false,
     });
     expect(savedResume.resume.profile.photoAssetId).toBeNull();
-    expect(savedResume.resume.profile.extraDetails).toEqual([]);
+    expect(savedResume.resume.profile.contacts).toEqual([]);
     expect(savedResume.language).toBe("en");
+  });
+
+  it("migrates legacy profile contact fields into contact rows", () => {
+    localStorage.setItem(
+      "open-resume-state",
+      JSON.stringify(
+        createRootState({
+          resume: {
+            ...initialResumeState,
+            profile: {
+              ...initialResumeState.profile,
+              email: "jane@example.com",
+              phone: "555-1234",
+              url: "linkedin.com/in/jane",
+              location: "Chicago, IL",
+              extraDetails: [
+                { label: "GitHub", value: "github.com/jane" },
+                { label: "Target Role", value: "Product Designer" },
+                { label: "", value: "" },
+              ],
+            },
+          } as any,
+        })
+      )
+    );
+
+    const snapshot = loadStateFromLocalStorage();
+
+    expect(snapshot?.resume.profile.contacts).toEqual([
+      { id: "legacy-email", type: "email", value: "jane@example.com" },
+      { id: "legacy-phone", type: "phone", value: "555-1234" },
+      { id: "legacy-link", type: "linkedin", value: "linkedin.com/in/jane" },
+      { id: "legacy-location", type: "location", value: "Chicago, IL" },
+      { id: "legacy-extra-0", type: "github", value: "github.com/jane" },
+      { id: "legacy-extra-1", type: "other", value: "Product Designer" },
+    ]);
   });
 
   it("creates a new chinese preset resume", () => {
@@ -249,7 +282,9 @@ describe("local storage resume manager", () => {
 
   it("duplicates resumes without changing their language", async () => {
     const originalResume = createNewResumeInLocalStorage({ preset: "chinese" });
-    const duplicatedResume = await duplicateResumeInLocalStorage(originalResume.id);
+    const duplicatedResume = await duplicateResumeInLocalStorage(
+      originalResume.id
+    );
 
     expect(duplicatedResume?.language).toBe("zh-CN");
     expect(duplicatedResume?.settings.documentSize).toBe("A4");

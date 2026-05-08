@@ -14,12 +14,14 @@ export const ResumePDFProject = ({
   projects,
   themeColor,
   headingColor,
+  showBulletPoints,
 }: {
   heading: string;
   layout: ResumeLayout;
   projects: ResumeProject[];
   themeColor: string;
   headingColor?: string;
+  showBulletPoints: boolean;
 }) => {
   return (
     <ResumePDFSection
@@ -39,8 +41,14 @@ export const ResumePDFProject = ({
             <ResumePDFText bold={true}>{project}</ResumePDFText>
             <ResumePDFText>{date}</ResumePDFText>
           </View>
-          <View style={{ ...styles.flexCol, marginTop: toPt(layout.compactGapPt) }}>
-            <ResumePDFBulletList items={descriptions} layout={layout} />
+          <View
+            style={{ ...styles.flexCol, marginTop: toPt(layout.compactGapPt) }}
+          >
+            <ResumePDFBulletList
+              items={descriptions}
+              layout={layout}
+              showBulletPoints={showBulletPoints}
+            />
           </View>
         </View>
       ))}

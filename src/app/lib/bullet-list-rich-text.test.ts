@@ -19,6 +19,17 @@ describe("bullet list rich text", () => {
     ).toBe("<div>Built <strong>high-impact</strong> features</div>");
   });
 
+  it("does not persist empty contenteditable bullet rows", () => {
+    expect(getBulletListStringsFromHTML("<div><br></div>")).toEqual([]);
+    expect(
+      getBulletListStringsFromHTML("<div>Built features</div><div><br></div>")
+    ).toEqual(["Built features"]);
+  });
+
+  it("renders an empty bullet list as a browser-editable empty row", () => {
+    expect(getHTMLFromBulletListStrings([])).toBe("<div><br></div>");
+  });
+
   it("splits markdown into normal and bold rich-text segments", () => {
     expect(
       getRichTextSegmentsFromMarkdown("Built **high-impact** features")

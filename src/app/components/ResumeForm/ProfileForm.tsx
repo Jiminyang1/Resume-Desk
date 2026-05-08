@@ -6,33 +6,32 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { BaseForm } from "components/ResumeForm/Form";
-import { Input, Textarea } from "components/ResumeForm/Form/InputGroup";
-import { useTranslation } from "components/AppPreferencesProvider";
-import { getProfilePhotoAsset, storeProfilePhotoFile } from "lib/profile-photo-storage";
 import {
-  addProfileExtraDetail,
+  INPUT_CLASS_NAME,
+  Input,
+  Textarea,
+} from "components/ResumeForm/Form/InputGroup";
+import { useTranslation } from "components/AppPreferencesProvider";
+import {
+  getProfilePhotoAsset,
+  storeProfilePhotoFile,
+} from "lib/profile-photo-storage";
+import {
+  addProfileContact,
   changeProfile,
-  changeProfileExtraDetail,
-  deleteProfileExtraDetail,
+  changeProfileContact,
+  deleteProfileContact,
   selectProfile,
 } from "lib/redux/resumeSlice";
 import { useAppDispatch, useAppSelector } from "lib/redux/hooks";
-import { type ResumeProfile } from "lib/redux/types";
+import { PROFILE_CONTACT_TYPES } from "lib/profile-contacts";
+import { type ProfileContactType, type ResumeProfile } from "lib/redux/types";
 
 export const ProfileForm = () => {
   const copy = useTranslation();
   const profile = useAppSelector(selectProfile);
   const dispatch = useAppDispatch();
-  const {
-    name,
-    email,
-    phone,
-    url,
-    summary,
-    location,
-    photoAssetId,
-    extraDetails,
-  } = profile;
+  const { name, summary, photoAssetId, contacts } = profile;
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
@@ -59,7 +58,7 @@ export const ProfileForm = () => {
   }, [photoAssetId]);
 
   const handleProfileChange = (
-    field: Exclude<keyof ResumeProfile, "photoAssetId" | "extraDetails">,
+    field: Exclude<keyof ResumeProfile, "photoAssetId" | "contacts">,
     value: string
   ) => {
     dispatch(changeProfile({ field, value }));
@@ -163,117 +162,71 @@ export const ProfileForm = () => {
           value={summary}
           onChange={handleProfileChange}
         />
-        <Input
-          label={copy.forms.profile.email}
-          labelClassName="col-span-4"
-          name="email"
-          placeholder={copy.forms.profile.emailPlaceholder}
-          value={email}
-          onChange={handleProfileChange}
-        />
-        <Input
-          label={copy.forms.profile.phone}
-          labelClassName="col-span-2"
-          name="phone"
-          placeholder={copy.forms.profile.phonePlaceholder}
-          value={phone}
-          onChange={handleProfileChange}
-        />
-        <Input
-          label={copy.forms.profile.website}
-          labelClassName="col-span-4"
-          name="url"
-          placeholder={copy.forms.profile.websitePlaceholder}
-          value={url}
-          onChange={handleProfileChange}
-        />
-        <Input
-          label={copy.forms.profile.location}
-          labelClassName="col-span-2"
-          name="location"
-          placeholder={copy.forms.profile.locationPlaceholder}
-          value={location}
-          onChange={handleProfileChange}
-        />
 
         <div className="col-span-full border border-slate-300 bg-stone-50 p-3">
           <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <div className="text-sm font-semibold text-slate-900">
-                {copy.forms.profile.extraDetails}
+                {copy.forms.profile.contactDetails}
               </div>
               <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-500">
-                {copy.forms.profile.extraDetailsDescription}
+                {copy.forms.profile.contactDetailsDescription}
               </p>
             </div>
             <button
               type="button"
               className="btn-secondary h-9 px-3 text-sm"
-              onClick={() => dispatch(addProfileExtraDetail())}
+              onClick={() => dispatch(addProfileContact(undefined))}
             >
               <PlusSmallIcon
                 className="-ml-0.5 mr-1 h-4 w-4 text-slate-400"
                 aria-hidden="true"
               />
-              {copy.forms.profile.addDetail}
+              {copy.forms.profile.addContact}
             </button>
           </div>
 
-          {extraDetails.length > 0 && (
+          {contacts.length > 0 && (
             <div className="mt-3 space-y-2.5">
-              {extraDetails.map((detail, idx) => (
+              {contacts.map((contact, idx) => (
                 <div
-                  key={detail.id}
+                  key={contact.id}
                   className="border border-slate-300 bg-white p-3"
                 >
-                  <div className="grid grid-cols-1 gap-2.5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,1fr)_auto]">
+                  <div className="grid grid-cols-1 gap-2.5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.8fr)_auto]">
                     <label className="text-[13px] font-medium text-gray-700">
-                      {copy.forms.profile.detailLabel}
-                      <input
-                        type="text"
-                        value={detail.label}
-                        placeholder={copy.forms.profile.detailLabelPlaceholder}
+                      {copy.forms.profile.contactType}
+                      <select
+                        value={contact.type}
                         onChange={(event) =>
                           dispatch(
-                            changeProfileExtraDetail({
+                            changeProfileContact({
                               idx,
-                              field: "label",
-                              value: event.target.value,
+                              field: "type",
+                              value: event.target.value as ProfileContactType,
                             })
                           )
                         }
-                        className="mt-1 block w-full rounded-sm border border-slate-300 px-2.5 py-1.5 text-sm leading-6 text-gray-900 outline-none transition focus:border-slate-500"
-                      />
+                        className={INPUT_CLASS_NAME}
+                      >
+                        {PROFILE_CONTACT_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {copy.forms.profile.contactTypeLabels[type]}
+                          </option>
+                        ))}
+                      </select>
                     </label>
                     <label className="text-[13px] font-medium text-gray-700">
                       {copy.forms.profile.detailValue}
                       <input
                         type="text"
-                        value={detail.value}
-                        placeholder={copy.forms.profile.detailValuePlaceholder}
+                        value={contact.value}
+                        placeholder={copy.forms.profile.contactValuePlaceholder}
                         onChange={(event) =>
                           dispatch(
-                            changeProfileExtraDetail({
+                            changeProfileContact({
                               idx,
                               field: "value",
-                              value: event.target.value,
-                            })
-                          )
-                        }
-                        className="mt-1 block w-full rounded-sm border border-slate-300 px-2.5 py-1.5 text-sm leading-6 text-gray-900 outline-none transition focus:border-slate-500"
-                      />
-                    </label>
-                    <label className="text-[13px] font-medium text-gray-700">
-                      {copy.forms.profile.detailHref}
-                      <input
-                        type="text"
-                        value={detail.href ?? ""}
-                        placeholder={copy.forms.profile.detailHrefPlaceholder}
-                        onChange={(event) =>
-                          dispatch(
-                            changeProfileExtraDetail({
-                              idx,
-                              field: "href",
                               value: event.target.value,
                             })
                           )
@@ -284,10 +237,8 @@ export const ProfileForm = () => {
                     <button
                       type="button"
                       className="btn-danger h-9 self-end px-2.5 text-sm"
-                      onClick={() =>
-                        dispatch(deleteProfileExtraDetail({ idx }))
-                      }
-                      aria-label={copy.forms.profile.removeDetail}
+                      onClick={() => dispatch(deleteProfileContact({ idx }))}
+                      aria-label={copy.forms.profile.removeContact}
                     >
                       <TrashIcon className="h-4 w-4" aria-hidden="true" />
                     </button>

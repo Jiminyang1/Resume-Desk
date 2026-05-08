@@ -4,6 +4,7 @@ import { initialEducation, initialWorkExperience } from "lib/redux/resumeSlice";
 import { deepClone } from "lib/deep-clone";
 import { cx } from "lib/cx";
 import { useTranslation } from "components/AppPreferencesProvider";
+import { getProfileContactValueByType } from "lib/profile-contacts";
 
 const TableRowHeader = ({ children }: { children: React.ReactNode }) => (
   <tr className="divide-x bg-gray-50">
@@ -50,18 +51,32 @@ export const ResumeTable = ({ resume }: { resume: Resume }) => {
       ? [deepClone(initialWorkExperience)]
       : resume.workExperiences;
   const skills = [...resume.skills.descriptions];
+  const { contacts } = resume.profile;
   return (
     <table className="mt-2 w-full border text-sm text-gray-900">
       <tbody className="divide-y text-left align-top">
         <TableRowHeader>{copy.parser.table.profile}</TableRowHeader>
         <TableRow label={copy.parser.table.name} value={resume.profile.name} />
-        <TableRow label={copy.parser.table.email} value={resume.profile.email} />
-        <TableRow label={copy.parser.table.phone} value={resume.profile.phone} />
+        <TableRow
+          label={copy.parser.table.email}
+          value={getProfileContactValueByType(contacts, "email")}
+        />
+        <TableRow
+          label={copy.parser.table.phone}
+          value={getProfileContactValueByType(contacts, "phone")}
+        />
         <TableRow
           label={copy.parser.table.location}
-          value={resume.profile.location}
+          value={getProfileContactValueByType(contacts, "location")}
         />
-        <TableRow label={copy.parser.table.link} value={resume.profile.url} />
+        <TableRow
+          label={copy.parser.table.link}
+          value={getProfileContactValueByType(contacts, [
+            "link",
+            "linkedin",
+            "github",
+          ])}
+        />
         <TableRow
           label={copy.parser.table.summary}
           value={resume.profile.summary}
@@ -69,8 +84,14 @@ export const ResumeTable = ({ resume }: { resume: Resume }) => {
         <TableRowHeader>{copy.parser.table.education}</TableRowHeader>
         {educations.map((education, idx) => (
           <Fragment key={idx}>
-            <TableRow label={copy.parser.table.school} value={education.school} />
-            <TableRow label={copy.parser.table.degree} value={education.degree} />
+            <TableRow
+              label={copy.parser.table.school}
+              value={education.school}
+            />
+            <TableRow
+              label={copy.parser.table.degree}
+              value={education.degree}
+            />
             <TableRow label={copy.parser.table.gpa} value={education.gpa} />
             <TableRow label={copy.parser.table.date} value={education.date} />
             <TableRow
@@ -95,7 +116,10 @@ export const ResumeTable = ({ resume }: { resume: Resume }) => {
               label={copy.parser.table.jobTitle}
               value={workExperience.jobTitle}
             />
-            <TableRow label={copy.parser.table.date} value={workExperience.date} />
+            <TableRow
+              label={copy.parser.table.date}
+              value={workExperience.date}
+            />
             <TableRow
               label={copy.parser.table.descriptions}
               value={workExperience.descriptions}
@@ -112,7 +136,10 @@ export const ResumeTable = ({ resume }: { resume: Resume }) => {
         )}
         {resume.projects.map((project, idx) => (
           <Fragment key={idx}>
-            <TableRow label={copy.parser.table.project} value={project.project} />
+            <TableRow
+              label={copy.parser.table.project}
+              value={project.project}
+            />
             <TableRow label={copy.parser.table.date} value={project.date} />
             <TableRow
               label={copy.parser.table.descriptions}

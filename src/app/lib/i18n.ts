@@ -187,24 +187,26 @@ const en = {
       uploadPhoto: "Upload photo",
       replacePhoto: "Replace photo",
       removePhoto: "Remove photo",
-      extraDetails: "Extra profile details",
-      extraDetailsDescription:
-        "Add custom rows like GitHub, Portfolio, WeChat, target role, or any other personal detail.",
-      addDetail: "Add detail row",
-      removeDetail: "Remove detail row",
-      detailLabel: "Label",
+      contactDetails: "Contact details",
+      contactDetailsDescription:
+        "Choose the contact type so the resume can show the right icon.",
+      addContact: "Add contact",
+      removeContact: "Remove contact",
+      contactType: "Type",
       detailValue: "Value",
-      detailHref: "Link (optional)",
+      contactTypeLabels: {
+        email: "Email",
+        phone: "Phone",
+        link: "Link",
+        location: "Location",
+        linkedin: "LinkedIn",
+        github: "GitHub",
+        other: "Other",
+      },
       namePlaceholder: "Sal Khan",
       objectivePlaceholder:
         "Entrepreneur and educator obsessed with making education free for anyone",
-      emailPlaceholder: "hello@khanacademy.org",
-      phonePlaceholder: "(123)456-7890",
-      websitePlaceholder: "linkedin.com/in/khanacademy",
-      locationPlaceholder: "NYC, NY",
-      detailLabelPlaceholder: "GitHub",
-      detailValuePlaceholder: "github.com/yourname",
-      detailHrefPlaceholder: "https://github.com/yourname",
+      contactValuePlaceholder: "hello@khanacademy.org",
     },
     work: {
       add: "Add Job",
@@ -271,8 +273,7 @@ const en = {
         `Even at ${size}pt, the resume is still longer than one page. Shorten the content to keep it to one page.`,
       autoFitError: (size: string) =>
         `Auto-fit could not measure the PDF. Using your chosen size of ${size}pt.`,
-      autoFitApplied: (size: string) =>
-        `One-page fit found at ${size}pt.`,
+      autoFitApplied: (size: string) => `One-page fit found at ${size}pt.`,
       autoFitAlready: (size: string) =>
         `Already fits on one page at ${size}pt.`,
       autoFitRefit: "Refit now",
@@ -350,8 +351,7 @@ const zhCN: TranslationDictionary = {
     libraryDescription:
       "所有草稿都只保存在当前浏览器。你可以在一个简洁的本地库里打开、查看和删除它们。",
     noResumesTitle: "还没有简历",
-    noResumesDescription:
-      "使用上面的工具栏来新建简历，或导入现有 PDF。",
+    noResumesDescription: "使用上面的工具栏来新建简历，或导入现有 PDF。",
     startedHere: "从此创建",
     importedPdf: "导入 PDF",
     openResume: "打开",
@@ -376,8 +376,7 @@ const zhCN: TranslationDictionary = {
   preview: {
     eyebrow: "预览",
     title: "编辑的同时查看最终导出的 PDF。",
-    description:
-      "无需离开编辑器即可缩放和导出，预览始终对应当前草稿。",
+    description: "无需离开编辑器即可缩放和导出，预览始终对应当前草稿。",
     downloadResume: "下载简历",
     resetZoom: "重置为 100%",
     updating: "正在更新预览...",
@@ -475,24 +474,25 @@ const zhCN: TranslationDictionary = {
       uploadPhoto: "上传头像",
       replacePhoto: "更换头像",
       removePhoto: "移除头像",
-      extraDetails: "补充个人信息",
-      extraDetailsDescription:
-        "可添加 GitHub、作品集、微信、求职意向或任意自定义信息。",
-      addDetail: "新增信息行",
-      removeDetail: "移除信息行",
-      detailLabel: "标签",
+      contactDetails: "联系方式",
+      contactDetailsDescription: "选择联系方式类型，简历会显示对应图标。",
+      addContact: "新增联系方式",
+      removeContact: "移除联系方式",
+      contactType: "类型",
       detailValue: "内容",
-      detailHref: "链接（可选）",
+      contactTypeLabels: {
+        email: "邮箱",
+        phone: "电话",
+        link: "链接",
+        location: "所在地",
+        linkedin: "LinkedIn",
+        github: "GitHub",
+        other: "其他",
+      },
       namePlaceholder: "张三",
       objectivePlaceholder:
         "例如：3 年前端开发经验，专注于打造高质量的产品体验",
-      emailPlaceholder: "hello@example.com",
-      phonePlaceholder: "138 0000 0000",
-      websitePlaceholder: "github.com/yourname",
-      locationPlaceholder: "上海",
-      detailLabelPlaceholder: "求职意向",
-      detailValuePlaceholder: "高级产品设计师",
-      detailHrefPlaceholder: "https://example.com",
+      contactValuePlaceholder: "hello@example.com",
     },
     work: {
       add: "新增工作经历",
@@ -558,7 +558,8 @@ const zhCN: TranslationDictionary = {
       autoFitError: (size: string) =>
         `自动适配无法完成测量，当前继续使用你设置的 ${size}pt。`,
       autoFitApplied: (size: string) => `已找到可保持单页的字号：${size}pt。`,
-      autoFitAlready: (size: string) => `当前内容在 ${size}pt 下已经可以保持单页。`,
+      autoFitAlready: (size: string) =>
+        `当前内容在 ${size}pt 下已经可以保持单页。`,
       autoFitRefit: "重新适配",
       atsWarningBelow: (size: string, range: string) =>
         `提示：当前字号 ${size}pt 低于推荐的 ATS 范围 ${range}。`,

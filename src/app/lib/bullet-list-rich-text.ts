@@ -45,18 +45,29 @@ export const getBulletListStringsFromHTML = (html: string) => {
       ? Array.from(container.childNodes)
       : [document.createElement("div")];
 
-  return lineNodes.map((node) => serializeNodeToMarkdown(node));
+  return normalizeBulletListStrings(
+    lineNodes.map((node) => serializeNodeToMarkdown(node))
+  );
 };
 
 export const getHTMLFromBulletListStrings = (bulletListStrings: string[]) => {
   if (bulletListStrings.length === 0) {
-    return "<div></div>";
+    return "<div><br></div>";
   }
 
   return bulletListStrings
-    .map((line) => `<div>${inlineBoldMarkdownToHTML(line)}</div>`)
+    .map((line) =>
+      line.trim() === ""
+        ? "<div><br></div>"
+        : `<div>${inlineBoldMarkdownToHTML(line)}</div>`
+    )
     .join("");
 };
+
+export const normalizeBulletListStrings = (bulletListStrings: string[]) =>
+  bulletListStrings.filter(
+    (line) => line.replace(/\u00a0/g, " ").trim() !== ""
+  );
 
 export const inlineBoldMarkdownToHTML = (value: string) => {
   const escapedValue = escapeHTML(value);

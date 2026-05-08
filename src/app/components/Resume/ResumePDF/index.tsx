@@ -90,6 +90,7 @@ export const ResumePDF = ({
         layout={resolvedLayout}
         workExperiences={visibleWorkExperiences}
         themeColor={accentColor}
+        showBulletPoints={showBulletPoints["workExperiences"]}
       />
     ),
     educations: () => (
@@ -109,6 +110,7 @@ export const ResumePDF = ({
         layout={resolvedLayout}
         projects={visibleProjects}
         themeColor={accentColor}
+        showBulletPoints={showBulletPoints["projects"]}
       />
     ),
     skills: () => (
@@ -134,11 +136,7 @@ export const ResumePDF = ({
   };
 
   return (
-    <Document
-      title={`${name} Resume`}
-      author={name}
-      producer={"Resume Desk"}
-    >
+    <Document title={`${name} Resume`} author={name} producer={"Resume Desk"}>
       <Page
         size={documentSize === "A4" ? "A4" : "LETTER"}
         style={{

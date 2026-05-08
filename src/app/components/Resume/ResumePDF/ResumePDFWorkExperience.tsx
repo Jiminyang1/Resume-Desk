@@ -4,7 +4,11 @@ import {
   ResumePDFBulletList,
   ResumePDFText,
 } from "components/Resume/ResumePDF/common";
-import { toNegativePt, toPt, type ResumeLayout } from "components/Resume/ResumePDF/layout";
+import {
+  toNegativePt,
+  toPt,
+  type ResumeLayout,
+} from "components/Resume/ResumePDF/layout";
 import { styles } from "components/Resume/ResumePDF/styles";
 import type { ResumeWorkExperience } from "lib/redux/types";
 
@@ -14,12 +18,14 @@ export const ResumePDFWorkExperience = ({
   workExperiences,
   themeColor,
   headingColor,
+  showBulletPoints,
 }: {
   heading: string;
   layout: ResumeLayout;
   workExperiences: ResumeWorkExperience[];
   themeColor: string;
   headingColor?: string;
+  showBulletPoints: boolean;
 }) => {
   return (
     <ResumePDFSection
@@ -52,8 +58,17 @@ export const ResumePDFWorkExperience = ({
               <ResumePDFText>{jobTitle}</ResumePDFText>
               <ResumePDFText>{date}</ResumePDFText>
             </View>
-            <View style={{ ...styles.flexCol, marginTop: toPt(layout.subSectionGapPt) }}>
-              <ResumePDFBulletList items={descriptions} layout={layout} />
+            <View
+              style={{
+                ...styles.flexCol,
+                marginTop: toPt(layout.subSectionGapPt),
+              }}
+            >
+              <ResumePDFBulletList
+                items={descriptions}
+                layout={layout}
+                showBulletPoints={showBulletPoints}
+              />
             </View>
           </View>
         );

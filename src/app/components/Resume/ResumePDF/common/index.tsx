@@ -1,9 +1,6 @@
 import { Text, View, Link } from "@react-pdf/renderer";
 import type { Style } from "@react-pdf/types";
-import {
-  toPt,
-  type ResumeLayout,
-} from "components/Resume/ResumePDF/layout";
+import { toPt, type ResumeLayout } from "components/Resume/ResumePDF/layout";
 import { styles } from "components/Resume/ResumePDF/styles";
 import { getRichTextSegmentsFromMarkdown } from "lib/bullet-list-rich-text";
 import { DEFAULT_FONT_COLOR } from "lib/redux/settingsSlice";
@@ -114,14 +111,16 @@ export const ResumePDFBulletList = ({
           <ResumePDFText
             style={{ lineHeight: layout.lineHeight, flexGrow: 1, flexBasis: 0 }}
           >
-            {getRichTextSegmentsFromMarkdown(item).map((segment, segmentIdx) => (
-              <Text
-                key={`${idx}-${segmentIdx}`}
-                style={{ fontWeight: segment.bold ? "bold" : "normal" }}
-              >
-                {segment.text}
-              </Text>
-            ))}
+            {getRichTextSegmentsFromMarkdown(item).map(
+              (segment, segmentIdx) => (
+                <Text
+                  key={`${idx}-${segmentIdx}`}
+                  style={{ fontWeight: segment.bold ? "bold" : "normal" }}
+                >
+                  {segment.text}
+                </Text>
+              )
+            )}
           </ResumePDFText>
         </View>
       ))}
@@ -131,12 +130,14 @@ export const ResumePDFBulletList = ({
 
 export const ResumePDFLink = ({
   src,
+  style = {},
   children,
 }: {
   src: string;
+  style?: Style;
   children: React.ReactNode;
 }) => (
-  <Link src={src} style={{ textDecoration: "none" }}>
+  <Link src={src} style={{ textDecoration: "none", ...style }}>
     {children}
   </Link>
 );

@@ -1,4 +1,5 @@
 import { useTranslation } from "components/AppPreferencesProvider";
+import { getProfileContactValueByType } from "lib/profile-contacts";
 import { isBold } from "lib/parse-resume-from-pdf/extract-resume-from-sections/lib/common-features";
 import {
   Badge,
@@ -84,6 +85,7 @@ export const ResumeParserAlgorithmArticle = ({
       </>
     );
   };
+  const { contacts } = profile;
   const step4ProfileFeatureScoresTable = [
     [
       "Resume Attribute",
@@ -93,12 +95,12 @@ export const ResumeParserAlgorithmArticle = ({
     ["Name", profile.name, <Scores key={"Name"} scores={profileScores.name} />],
     [
       "Email",
-      profile.email,
+      getProfileContactValueByType(contacts, "email"),
       <Scores key={"Email"} scores={profileScores.email} />,
     ],
     [
       "Phone",
-      profile.phone,
+      getProfileContactValueByType(contacts, "phone"),
       <Scores key={"Phone"} scores={profileScores.phone} />,
     ],
   ];
@@ -108,9 +110,7 @@ export const ResumeParserAlgorithmArticle = ({
       <Heading className="text-primary !mt-0 border-t-2 pt-8">
         Resume Parser Algorithm Deep Dive
       </Heading>
-      <Paragraph smallMarginTop={true}>
-        {copy.parser.articleIntro}
-      </Paragraph>
+      <Paragraph smallMarginTop={true}>{copy.parser.articleIntro}</Paragraph>
       {/* Step 1. Read the text items from a PDF file */}
       <Heading level={2}>Step 1. Read the text items from a PDF file</Heading>
       <Paragraph smallMarginTop={true}>
@@ -344,9 +344,7 @@ export const ResumeParserAlgorithmArticle = ({
         before adding the next subsection. There is also a fallback heuristic if
         the main heuristic doesn't apply to check if the text item is bolded.
       </Paragraph>
-      <Paragraph>
-        {copy.parser.articleOutro}
-      </Paragraph>
+      <Paragraph>{copy.parser.articleOutro}</Paragraph>
       <Paragraph>
         Written by <Link href="https://github.com/xitanggg">Xitang</Link> on
         June 2023

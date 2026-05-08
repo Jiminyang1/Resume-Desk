@@ -12,6 +12,7 @@ import {
   hasLetterAndIsAllUpperCase,
 } from "lib/parse-resume-from-pdf/extract-resume-from-sections/lib/common-features";
 import { getTextWithHighestFeatureScore } from "lib/parse-resume-from-pdf/extract-resume-from-sections/lib/feature-scoring-system";
+import type { ResumeProfileContact } from "lib/redux/types";
 
 // Name
 export const matchOnlyLetterSpaceOrPeriod = (item: TextItem) =>
@@ -167,14 +168,17 @@ export const extractProfile = (sections: ResumeSectionToLines) => {
   return {
     profile: {
       name,
-      email,
-      phone,
-      location,
-      url,
       // Dedicated section takes higher precedence over profile summary
       summary: summarySection || objectiveSection || summary,
       photoAssetId: null,
-      extraDetails: [],
+      contacts: (
+        [
+          { id: "parsed-email", type: "email", value: email },
+          { id: "parsed-phone", type: "phone", value: phone },
+          { id: "parsed-location", type: "location", value: location },
+          { id: "parsed-link", type: "link", value: url },
+        ] satisfies ResumeProfileContact[]
+      ).filter((contact) => contact.value.trim().length > 0),
     },
     // For debugging
     profileScores: {

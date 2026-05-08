@@ -27,12 +27,8 @@ export const createDefaultResume = (): Resume => ({
   profile: {
     name: "",
     summary: "",
-    email: "",
-    phone: "",
-    location: "",
-    url: "",
     photoAssetId: null,
-    extraDetails: [],
+    contacts: [],
   },
   workExperiences: [
     {
@@ -93,6 +89,7 @@ export const createDefaultSettingsForPreset = (
     preset === "chinese" ? CHINESE_FORM_HEADINGS : ENGLISH_FORM_HEADINGS,
   formsOrder: ["workExperiences", "educations", "projects", "skills", "custom"],
   showBulletPoints: {
+    workExperiences: true,
     educations: true,
     projects: true,
     skills: true,

@@ -13,6 +13,7 @@ import {
   type ResumeLanguage,
   type ResumePreset,
 } from "lib/resume-presets";
+import { migrateLegacyProfileContacts } from "lib/profile-contacts";
 import type { Settings } from "lib/redux/settingsSlice";
 import type { RootState } from "lib/redux/store";
 import type { Resume } from "lib/redux/types";
@@ -87,10 +88,11 @@ const normalizeResume = (resume: Partial<Resume>) => {
     ...defaults,
     ...resume,
     profile: {
-      ...defaults.profile,
-      ...resume.profile,
-      photoAssetId: resume.profile?.photoAssetId ?? defaults.profile.photoAssetId,
-      extraDetails: resume.profile?.extraDetails ?? defaults.profile.extraDetails,
+      name: resume.profile?.name ?? defaults.profile.name,
+      summary: resume.profile?.summary ?? defaults.profile.summary,
+      photoAssetId:
+        resume.profile?.photoAssetId ?? defaults.profile.photoAssetId,
+      contacts: migrateLegacyProfileContacts(resume.profile ?? {}),
     },
     workExperiences: resume.workExperiences ?? defaults.workExperiences,
     educations: resume.educations ?? defaults.educations,
@@ -98,14 +100,12 @@ const normalizeResume = (resume: Partial<Resume>) => {
     skills: {
       ...defaults.skills,
       ...resume.skills,
-      descriptions:
-        resume.skills?.descriptions ?? defaults.skills.descriptions,
+      descriptions: resume.skills?.descriptions ?? defaults.skills.descriptions,
     },
     custom: {
       ...defaults.custom,
       ...resume.custom,
-      descriptions:
-        resume.custom?.descriptions ?? defaults.custom.descriptions,
+      descriptions: resume.custom?.descriptions ?? defaults.custom.descriptions,
     },
   } as Resume;
 };
@@ -152,8 +152,7 @@ const normalizeSavedResume = (savedResume: StoredSavedResume): SavedResume => {
 
   return {
     ...savedResume,
-    language:
-      savedResume.language ?? inferResumeLanguageFromSettings(settings),
+    language: savedResume.language ?? inferResumeLanguageFromSettings(settings),
     resume: normalizeResume(savedResume.resume),
     settings,
   };
@@ -179,10 +178,7 @@ const getResumeTitle = ({
   );
 };
 
-const getDuplicateResumeTitle = (
-  title: string,
-  language: ResumeLanguage
-) => {
+const getDuplicateResumeTitle = (title: string, language: ResumeLanguage) => {
   const trimmedTitle = title.trim();
   const copyLabel = language === "zh-CN" ? "副本" : "Copy";
   const untitledTitle =
@@ -221,7 +217,8 @@ const createStoredResume = ({
   const now = new Date().toISOString();
   const normalizedResume = normalizeResume(resume);
   const normalizedSettings = normalizeSettings(settings);
-  const fallbackTitle = title ?? getUntitledResumeTitleForSettings(normalizedSettings);
+  const fallbackTitle =
+    title ?? getUntitledResumeTitleForSettings(normalizedSettings);
 
   return {
     id: createResumeId(),
@@ -229,8 +226,7 @@ const createStoredResume = ({
       resume: normalizedResume,
       fallbackTitle,
     }),
-    language:
-      language ?? inferResumeLanguageFromSettings(normalizedSettings),
+    language: language ?? inferResumeLanguageFromSettings(normalizedSettings),
     source,
     createdAt: now,
     updatedAt: now,
@@ -459,9 +455,7 @@ export const openResumeInLocalStorage = (resumeId: string) => {
   return savedResume;
 };
 
-export const duplicateResumeInLocalStorage = async (
-  resumeId: string
-) => {
+export const duplicateResumeInLocalStorage = async (resumeId: string) => {
   const resumeManagerState = loadResumeManagerFromLocalStorage();
   const savedResume = resumeManagerState.resumes.find(
     (resume) => resume.id === resumeId
@@ -532,7 +526,9 @@ export const deleteResumeFromLocalStorage = async (resumeId: string) => {
 
   const photoAssetId = resumeToDelete?.resume.profile.photoAssetId;
   const isPhotoStillUsed = photoAssetId
-    ? resumes.some((resume) => resume.resume.profile.photoAssetId === photoAssetId)
+    ? resumes.some(
+        (resume) => resume.resume.profile.photoAssetId === photoAssetId
+      )
     : false;
 
   if (photoAssetId && !isPhotoStillUsed) {

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, type MutableRefObject } from "react";
 import ContentEditable from "react-contenteditable";
 import { useAutosizeTextareaHeight } from "lib/hooks/useAutosizeTextareaHeight";
 import {
   getBulletListStringsFromHTML,
   getHTMLFromBulletListStrings,
+  normalizeBulletListStrings,
 } from "lib/bullet-list-rich-text";
 
 interface InputProps<K extends string, V extends string | string[]> {
@@ -125,7 +126,61 @@ const BulletListTextareaGeneral = <T extends string>({
   onChange,
   showBulletPoints = true,
 }: InputProps<T, string[]> & { showBulletPoints?: boolean }) => {
-  const html = getHTMLFromBulletListStrings(bulletListStrings);
+  const externalHtml = getHTMLFromBulletListStrings(bulletListStrings);
+  const [html, setHtml] = useState(externalHtml);
+  const isFocusedRef = useRef(false);
+  const lastBulletListStringsRef = useRef(bulletListStrings);
+  const undoStackRef = useRef<string[][]>([]);
+  const redoStackRef = useRef<string[][]>([]);
+
+  useEffect(() => {
+    if (
+      !areBulletListStringsEqual(
+        bulletListStrings,
+        lastBulletListStringsRef.current
+      )
+    ) {
+      lastBulletListStringsRef.current = bulletListStrings;
+      undoStackRef.current = [];
+      redoStackRef.current = [];
+    }
+
+    if (!isFocusedRef.current && html !== externalHtml) {
+      setHtml(externalHtml);
+    }
+  }, [bulletListStrings, externalHtml, html]);
+
+  const handleHTMLChange = (innerHTML: string) => {
+    const newBulletListStrings = getBulletListStringsFromHTML(innerHTML);
+
+    if (
+      !areBulletListStringsEqual(
+        newBulletListStrings,
+        lastBulletListStringsRef.current
+      )
+    ) {
+      undoStackRef.current.push(lastBulletListStringsRef.current);
+      if (undoStackRef.current.length > MAX_UNDO_STACK_SIZE) {
+        undoStackRef.current.shift();
+      }
+      redoStackRef.current = [];
+      lastBulletListStringsRef.current = newBulletListStrings;
+      onChange(name, newBulletListStrings);
+    }
+
+    setHtml(innerHTML);
+  };
+
+  const restoreBulletListStrings = (
+    nextBulletListStrings: string[],
+    historyStack: MutableRefObject<string[][]>
+  ) => {
+    historyStack.current.push(lastBulletListStringsRef.current);
+    lastBulletListStringsRef.current = nextBulletListStrings;
+    setHtml(getHTMLFromBulletListStrings(nextBulletListStrings));
+    onChange(name, nextBulletListStrings);
+  };
+
   return (
     <InputGroupWrapper label={label} className={wrapperClassName}>
       <ContentEditable
@@ -135,7 +190,38 @@ const BulletListTextareaGeneral = <T extends string>({
         }`}
         // Note: placeholder currently doesn't work
         placeholder={placeholder}
+        onFocus={() => {
+          isFocusedRef.current = true;
+        }}
+        onBlur={(e) => {
+          isFocusedRef.current = false;
+          const newBulletListStrings = getBulletListStringsFromHTML(
+            e.currentTarget.innerHTML
+          );
+          setHtml(getHTMLFromBulletListStrings(newBulletListStrings));
+          onChange(name, newBulletListStrings);
+        }}
         onKeyDown={(e) => {
+          const isUndoShortcut =
+            (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z";
+          const isRedoShortcut =
+            ((e.metaKey || e.ctrlKey) &&
+              e.shiftKey &&
+              e.key.toLowerCase() === "z") ||
+            (e.ctrlKey && e.key.toLowerCase() === "y");
+
+          if (isUndoShortcut || isRedoShortcut) {
+            e.preventDefault();
+            const sourceStack = isRedoShortcut ? redoStackRef : undoStackRef;
+            const targetStack = isRedoShortcut ? undoStackRef : redoStackRef;
+            const previousBulletListStrings = sourceStack.current.pop();
+
+            if (previousBulletListStrings) {
+              restoreBulletListStrings(previousBulletListStrings, targetStack);
+            }
+            return;
+          }
+
           if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
             e.preventDefault();
             document.execCommand("bold");
@@ -143,9 +229,11 @@ const BulletListTextareaGeneral = <T extends string>({
         }}
         onChange={(e) => {
           if (e.type === "input") {
-            const { innerHTML } = e.currentTarget as HTMLDivElement;
-            const newBulletListStrings = getBulletListStringsFromHTML(innerHTML);
-            onChange(name, newBulletListStrings);
+            const innerHTML =
+              "value" in e.target && typeof e.target.value === "string"
+                ? e.target.value
+                : (e.currentTarget as HTMLDivElement).innerHTML;
+            handleHTMLChange(innerHTML);
           }
         }}
         html={html}
@@ -153,6 +241,11 @@ const BulletListTextareaGeneral = <T extends string>({
     </InputGroupWrapper>
   );
 };
+
+const MAX_UNDO_STACK_SIZE = 100;
+
+const areBulletListStringsEqual = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((value, idx) => value === b[idx]);
 
 const NORMALIZED_LINE_BREAK = "\n";
 /**
@@ -211,7 +304,7 @@ const getTextareaValueFromBulletListStrings = (
   const prefix = showBulletPoints ? "• " : "";
 
   if (bulletListStrings.length === 0) {
-    return prefix;
+    return "";
   }
 
   let value = "";
@@ -254,8 +347,8 @@ const getBulletListStringsFromTextareaValue = (
         newStrings.push(string);
       }
     }
-    return newStrings;
+    return normalizeBulletListStrings(newStrings);
   }
 
-  return strings;
+  return normalizeBulletListStrings(strings);
 };

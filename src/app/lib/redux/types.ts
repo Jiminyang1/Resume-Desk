@@ -1,19 +1,23 @@
-export interface ResumeProfileExtraDetail {
+export type ProfileContactType =
+  | "email"
+  | "phone"
+  | "link"
+  | "location"
+  | "linkedin"
+  | "github"
+  | "other";
+
+export interface ResumeProfileContact {
   id: string;
-  label: string;
+  type: ProfileContactType;
   value: string;
-  href?: string;
 }
 
 export interface ResumeProfile {
   name: string;
-  email: string;
-  phone: string;
-  url: string;
   summary: string;
-  location: string;
   photoAssetId: string | null;
-  extraDetails: ResumeProfileExtraDetail[];
+  contacts: ResumeProfileContact[];
 }
 
 export interface ResumeWorkExperience {
